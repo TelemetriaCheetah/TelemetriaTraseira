@@ -50,6 +50,7 @@ void CheetahSerial::sendPayload()
   this->payload[0] = 255;
   this->payload[MSG_SIZE-1] = 254;
   Serial.write(this->payload, MSG_SIZE);
+  //Serial.println("Envio realizado com sucesso");
 }
 
 
@@ -124,12 +125,12 @@ uint16_t Acelerometro::temp()
 
 uint8_t CheetahCAN::beginCAN()
 {
-  int init_status = begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ);
+  this->init_status = begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ);
   setMode(MCP_NORMAL);
-  if(init_status == CAN_OK)
+  if(this->init_status == CAN_OK)
     return CAN_OK;
   else
-    return init_status;
+    return this->init_status;
   pinMode(CAN0_INT, INPUT);
 
   this->cont8 = 0;
@@ -155,7 +156,7 @@ uint8_t CheetahCAN::sendMessage(uint16_t id)
 
 bool CheetahCAN::readMessage()
 {
-  if(!digitalRead(CAN0_INT))
+  if(!digitalRead(CAN0_INT) && init_status==true)
   {
     readMsgBuf(&rxId, &rxLen, rxBuf);
     return true;
@@ -178,21 +179,21 @@ uint16_t CheetahCAN::getMsgLen()
   return rxLen;
 }
 
-CelulaDeCarga::CelulaDeCarga()
-{
-  begin(CELULACARGA_DOUT_PIN , CELULACARGA_SCK_PIN);
-}
+// CelulaDeCarga::CelulaDeCarga()
+// {
+//   begin(CELULACARGA_DOUT_PIN , CELULACARGA_SCK_PIN);
+// }
 
-uint16_t CelulaDeCarga::testeCelula()
-{
-  Serial.println("Inicializando a celula");
-  Serial.print("Leitura bruta do ADC");
-  Serial.println(read());
-  Serial.print("Media de 20 leituras");
-  Serial.println(read_average(20));
-  Serial.print("Coloque um objeto de peso conhecido e anote o valor obtido a seguir");
-  set_scale(CELULACARGA_DIV);
-  tare();
-  Serial.println(get_value(20));
-  Serial.println("Ajuste o parametro em config.h para obter uma medida precisa");
-}
+// uint16_t CelulaDeCarga::testeCelula()
+// {
+//   Serial.println("Inicializando a celula");
+//   Serial.print("Leitura bruta do ADC");
+//   Serial.println(read());
+//   Serial.print("Media de 20 leituras");
+//   Serial.println(read_average(20));
+//   Serial.print("Coloque um objeto de peso conhecido e anote o valor obtido a seguir");
+//   set_scale(CELULACARGA_DIV);
+//   tare();
+//   Serial.println(get_value(20));
+//   Serial.println("Ajuste o parametro em config.h para obter uma medida precisa");
+// }

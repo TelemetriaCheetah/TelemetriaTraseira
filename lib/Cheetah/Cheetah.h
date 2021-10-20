@@ -57,6 +57,7 @@ class CheetahCAN : public MCP_CAN
     long unsigned int rxId;
     unsigned char rxLen = 0;
     unsigned char rxBuf[8];
+    uint16_t init_status;
   public:
     void addToPayload8(byte value);
     uint8_t beginCAN();
@@ -67,12 +68,12 @@ class CheetahCAN : public MCP_CAN
     byte* getMsg();
 };
 
-class CelulaDeCarga : public HX711
-{
-  public:
-    CelulaDeCarga();
-    uint16_t testeCelula();
-    uint16_t readCellValue();
-};
+// class CelulaDeCarga : public HX711
+// {
+//   public:
+//     CelulaDeCarga();
+//     uint16_t testeCelula();
+//     uint16_t readCellValue();
+// };
 
 #endif

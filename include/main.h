@@ -9,8 +9,8 @@
 #define GPS_RX_BUFFER_SIZE 4
 #define GPSSerial Serial1
 #define GPSECHO false
-#define TENSAO_GLV 11
-#define HALL_GLV 12
+#define TENSAO_GLV 34
+#define HALL_GLV 35
 
 static uint8_t taskCoreZero = 0;
 static uint8_t taskCoreOne  = 1;
