@@ -1,22 +1,29 @@
 #include "main.h"
-
+#define DEBUG 0
 void setup() 
 {
   Serial.begin(115200);
   can.beginCAN();
-  xTaskCreatePinnedToCore(readCanBuffer,"readCanBuffer",10000,NULL,2,NULL,taskCoreZero);
-  xTaskCreatePinnedToCore(readSensor,"readSensor",10000,NULL,1,NULL,taskCoreOne);
-  xTaskCreatePinnedToCore(sendData,"sendData",10000,NULL,2,NULL,taskCoreOne);
+  if(!DEBUG)
+    xTaskCreatePinnedToCore(readCanBuffer,"readCanBuffer",10000,NULL,2,NULL,taskCoreZero);
+  //xTaskCreatePinnedToCore(readSensor,"readSensor",10000,NULL,1,NULL,taskCoreOne);
+  if(!DEBUG)
+    xTaskCreatePinnedToCore(sendData,"sendData",10000,NULL,2,NULL,taskCoreOne);
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
   GPS.sendCommand(PGCMD_ANTENNA);
   delay(1000);
+  Serial.println("iniciando");
 }
 
 void loop() 
 {
-
+  //Serial.print("CANRX 0: ");
+  //Serial.println(canRxBuffer[0]);
+  //delay(100);
+  if(DEBUG)
+    can.testeCan();
 }
 
 void readSensor(void *pvParameters)
@@ -34,27 +41,27 @@ void sendData(void *pvParameters)
   while (true)
   {
     // Serial.println("Teste");
-    serial.addAnalogSensor(canRxBuffer[1]);
-    serial.addAnalogSensor(canRxBuffer[2]);
-    serial.addAnalogSensor(canRxBuffer[4]);
-    serial.addAnalogSensor(canRxBuffer[5]);
-    serial.addAnalogSensor(canRxBuffer[6]);
-    serial.addAnalogSensor(canRxBuffer[7]);
-    serial.addAnalogSensor(canRxBuffer[8]);
-    serial.addAnalogSensor(canRxBuffer[9]);
-    serial.addAnalogSensor(canRxBuffer[10]);
-    serial.addAnalogSensor(canRxBuffer[11]);
-    serial.addAnalogSensor(canRxBuffer[12]);
-    serial.addAnalogSensor(canRxBuffer[13]);
-    serial.addAnalogSensor(canRxBuffer[14]);
-    serial.addAnalogSensor(canRxBuffer[15]);
-    serial.addAnalogSensor(canRxBuffer[16]);
-    serial.addAnalogSensor(gpsRxBuffer[0]);
-    serial.addAnalogSensor(gpsRxBuffer[0] >> 15);
-    serial.addAnalogSensor(gpsRxBuffer[1]);
-    serial.addAnalogSensor(gpsRxBuffer[1] >> 15);
-    serial.addAnalogSensor(gpsRxBuffer[2]);
-    serial.addAnalogSensor(gpsRxBuffer[3]);
+    serial.addAnalogSensor(canRxBuffer[1]); //TPS1 
+    serial.addAnalogSensor(canRxBuffer[2]); //TPS2 
+    serial.addAnalogSensor(canRxBuffer[4]); //Rotação FD 
+    serial.addAnalogSensor(canRxBuffer[5]); //Rotação FE 
+    serial.addAnalogSensor(canRxBuffer[6]); //Rotação TD 
+    serial.addAnalogSensor(canRxBuffer[7]); //Rotação TE 
+    serial.addAnalogSensor(canRxBuffer[8]); //Temperatura centro disco FD
+    serial.addAnalogSensor(canRxBuffer[9]); //Temperatura borda disco FD
+    serial.addAnalogSensor(canRxBuffer[10]);//Temperatura centro disco FE
+    serial.addAnalogSensor(canRxBuffer[11]);//Temperatura borda disco FE
+    serial.addAnalogSensor(canRxBuffer[12]);//Temperatura centro disco TD
+    serial.addAnalogSensor(canRxBuffer[13]);//Temperatura borda disco TD
+    serial.addAnalogSensor(canRxBuffer[14]);//Temperatura centro disco TE
+    serial.addAnalogSensor(canRxBuffer[15]);//Temperatura borda disco TE
+    serial.addAnalogSensor(canRxBuffer[16]);//Encoder do volante
+    serial.addAnalogSensor(gpsRxBuffer[0]); //Latitude GNSS
+    serial.addAnalogSensor(gpsRxBuffer[0] >> 15); //Latitude GNSS
+    serial.addAnalogSensor(gpsRxBuffer[1]);       //Longitude GNSS
+    //serial.addAnalogSensor(gpsRxBuffer[1] >> 15); //Longitude GNSS
+    serial.addAnalogSensor(gpsRxBuffer[2]);       //Sat count
+    serial.addAnalogSensor(gpsRxBuffer[3]);       //HDOP
     // serial.addAnalogSensor(123);
     // serial.addAnalogSensor(696);
     // serial.addAnalogSensor(4442);
@@ -65,18 +72,18 @@ void sendData(void *pvParameters)
     // serial.addAnalogSensor(0);
     // serial.addAnalogSensor(0);
     // serial.addAnalogSensor(0);
-    serial.addAnalogSensor(accel.accelX());
-    serial.addAnalogSensor(accel.accelY());
-    serial.addAnalogSensor(accel.accelZ());
-    serial.addAnalogSensor(accel.gyroX());
-    serial.addAnalogSensor(accel.gyroY());
-    serial.addAnalogSensor(accel.gyroZ());
-    serial.addAnalogSensor(accel.magX());
-    serial.addAnalogSensor(accel.magY());
-    serial.addAnalogSensor(accel.magZ());
-    serial.addAnalogSensor(accel.temp());
+    serial.addAnalogSensor(accel.accelX()); //Aceleração eixo X
+    serial.addAnalogSensor(accel.accelY()); //Aceleração eixo Y
+    serial.addAnalogSensor(accel.accelZ()); //Aceleração eixo Z
+    serial.addAnalogSensor(accel.gyroX());  //Giroscópio eixo X
+    serial.addAnalogSensor(accel.gyroY());  //Giroscópio eixo Y
+    serial.addAnalogSensor(accel.gyroZ());  //Giroscópio eixo Z
+    serial.addAnalogSensor(accel.magX());   //Magnetômetro eixo X
+    serial.addAnalogSensor(accel.magY());   //Magnetômetro eixo Y
+    serial.addAnalogSensor(accel.magZ());   //Magnetômetro eixo Z
+    serial.addAnalogSensor(accel.temp());   //Temperatura
     
-    for(int i = 31 ; i <= 79 ; i++)
+    for(int i = 31 ; i <= 80 ; i++)
     {
       if(i == 55)
       {
@@ -91,6 +98,7 @@ void sendData(void *pvParameters)
         serial.addAnalogSensor(canRxBuffer[i]);
       }
     }
+    serial.addAnalogSensor(65342);
     serial.sendPayload();
     delay(100);
   }
@@ -110,6 +118,7 @@ void readCanBuffer(void *pvParameters)
             canRxBuffer[ 1] = msg[0] | msg[1] << 8;   // SA1
             canRxBuffer[ 2] = msg[2] | msg[3] << 8;   // SA2
             canRxBuffer[76] = msg[4] | msg[5] << 8;   // SA76
+            canRxBuffer[80] = msg[6] | msg[7] << 8;   // Flags Inversor
             break;
           case 0x01:                                  // Roda Frontal Esquerda
             canRxBuffer[10] = msg[0] | msg[1] << 8;   // SA10

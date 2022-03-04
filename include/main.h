@@ -5,7 +5,7 @@
 #include <Adafruit_GPS.h>
 #include "Cheetah.h"
 
-#define CAN_RX_BUFFER_SIZE 80
+#define CAN_RX_BUFFER_SIZE 81
 #define GPS_RX_BUFFER_SIZE 4
 #define GPSSerial Serial1
 #define GPSECHO false
@@ -17,7 +17,7 @@ static uint8_t taskCoreOne  = 1;
 uint32_t timer = millis();
 
 CheetahSerial serial;
-CheetahCAN can(10);
+CheetahCAN can(5);
 Adafruit_GPS GPS(&GPSSerial);
 Acelerometro accel;
 

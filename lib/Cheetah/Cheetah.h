@@ -2,10 +2,10 @@
 #define CHEETAH_H
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))
-#define MSG_SIZE 161 //EM BYTES, CONSULTAR DOCUMENTACAO
-#define N_SENSORES_MEDICAO 79
+#define MSG_SIZE 165 //EM BYTES, CONSULTAR DOCUMENTACAO
+#define N_SENSORES_MEDICAO 81
 #define N_SENSORES_DISCRETO 8
-#define CAN0_INT 2
+#define CAN0_INT 16
 #include "Arduino.h"
 #include "mcpcan.h"
 #include <Wire.h>
@@ -58,8 +58,11 @@ class CheetahCAN : public MCP_CAN
     unsigned char rxLen = 0;
     unsigned char rxBuf[8];
     uint16_t init_status;
+    unsigned char len = 0;
+    char msgString[128];   
   public:
     void addToPayload8(byte value);
+    void testeCan();
     uint8_t beginCAN();
     bool readMessage();
     uint8_t sendMessage(uint16_t id);
