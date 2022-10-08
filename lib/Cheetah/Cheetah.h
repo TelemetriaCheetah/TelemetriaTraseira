@@ -5,7 +5,7 @@
 #define MSG_SIZE 165 //EM BYTES, CONSULTAR DOCUMENTACAO
 #define N_SENSORES_MEDICAO 81
 #define N_SENSORES_DISCRETO 8
-#define CAN0_INT 16
+#define CAN0_INT 27
 #include "Arduino.h"
 #include "mcpcan.h"
 #include <Wire.h>

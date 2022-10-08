@@ -3,18 +3,19 @@
 void setup() 
 {
   Serial.begin(115200);
+  //delay(5000);
   can.beginCAN();
   if(!DEBUG)
     xTaskCreatePinnedToCore(readCanBuffer,"readCanBuffer",10000,NULL,2,NULL,taskCoreZero);
   //xTaskCreatePinnedToCore(readSensor,"readSensor",10000,NULL,1,NULL,taskCoreOne);
   if(!DEBUG)
     xTaskCreatePinnedToCore(sendData,"sendData",10000,NULL,2,NULL,taskCoreOne);
-  GPS.begin(9600);
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
-  GPS.sendCommand(PGCMD_ANTENNA);
-  delay(1000);
-  Serial.println("iniciando");
+  //GPS.begin(9600);
+  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  //GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
+  //GPS.sendCommand(PGCMD_ANTENNA);
+  //delay(1000);
+  //Serial.println("iniciando");
 }
 
 void loop() 
@@ -23,7 +24,9 @@ void loop()
   //Serial.println(canRxBuffer[0]);
   //delay(100);
   if(DEBUG)
+  {
     can.testeCan();
+  }
 }
 
 void readSensor(void *pvParameters)
@@ -59,7 +62,7 @@ void sendData(void *pvParameters)
     serial.addAnalogSensor(gpsRxBuffer[0]); //Latitude GNSS
     serial.addAnalogSensor(gpsRxBuffer[0] >> 15); //Latitude GNSS
     serial.addAnalogSensor(gpsRxBuffer[1]);       //Longitude GNSS
-    //serial.addAnalogSensor(gpsRxBuffer[1] >> 15); //Longitude GNSS
+    serial.addAnalogSensor(gpsRxBuffer[1] >> 15); //Longitude GNSS
     serial.addAnalogSensor(gpsRxBuffer[2]);       //Sat count
     serial.addAnalogSensor(gpsRxBuffer[3]);       //HDOP
     // serial.addAnalogSensor(123);
@@ -89,7 +92,7 @@ void sendData(void *pvParameters)
       {
         serial.addAnalogSensor(analogRead(TENSAO_GLV));
       }
-      if(i == 70)
+      else if(i == 70)
       {
         serial.addAnalogSensor(analogRead(HALL_GLV));
       }
@@ -223,19 +226,19 @@ void readCanBuffer(void *pvParameters)
   }
 }
 
-void readGPS()
-{
-  char c = GPS.read();
-  if (GPS.newNMEAreceived()) 
-  {
-    if (!GPS.parse(GPS.lastNMEA()))
-      return;
-  }
-  if (millis() - timer > 2000)
-  {
-    gpsRxBuffer[0] = GPS.latitude;
-    gpsRxBuffer[1] = GPS.longitude;
-    gpsRxBuffer[2] = GPS.satellites;
-    gpsRxBuffer[3] = GPS.fixquality;
-  }
-}
+// void readGPS()
+// {
+//   char c = GPS.read();
+//   if (GPS.newNMEAreceived()) 
+//   {
+//     if (!GPS.parse(GPS.lastNMEA()))
+//       return;
+//   }
+//   if (millis() - timer > 2000)
+//   {
+//     gpsRxBuffer[0] = GPS.latitude;
+//     gpsRxBuffer[1] = GPS.longitude;
+//     gpsRxBuffer[2] = GPS.satellites;
+//     gpsRxBuffer[3] = GPS.fixquality;
+//   }
+// }

@@ -128,9 +128,16 @@ uint8_t CheetahCAN::beginCAN()
   this->init_status = begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ);
   setMode(MCP_NORMAL);
   if(this->init_status == CAN_OK)
+  {
+    Serial.println("MCP2515 Initialized Successfully!");
     return CAN_OK;
+  }
   else
+  {
+    Serial.print("MCP2515 ERROR : ");
+    Serial.println(init_status);
     return this->init_status;
+  }
   pinMode(CAN0_INT, INPUT);
 
   this->cont8 = 0;
